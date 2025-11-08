@@ -2,6 +2,7 @@
 #include <sys/epoll.h>
 #include <iostream>
 #include <unistd.h>
+#include <errno.h>
 
 const int MAX_EVENTS = 1024;
 
@@ -35,6 +36,8 @@ void Reactor::addHandler(std::shared_ptr<EventHandler> handler, uint32_t events)
     }
 
     handlers_[handler->getFd()] = handler;
+
+    connection_count_++;
 }
 void Reactor::modifyHandler(std::shared_ptr<EventHandler> handler, uint32_t events)
 {
@@ -53,6 +56,7 @@ void Reactor::removeHandler(std::shared_ptr<EventHandler> handler)
 {
     epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, handler->getFd(), nullptr);
     handlers_.erase(handler->getFd());
+    connection_count_--;
 }
 
 void Reactor::eventLoop()
@@ -64,17 +68,20 @@ void Reactor::eventLoop()
         int nfds = epoll_wait(epoll_fd_, events, MAX_EVENTS, -1);
         if (nfds == -1)
         {
-            std::cerr << "epoll_wait error" << std::endl;
+            std::cerr << "epoll_wait error " << std::endl; // 输出具体错误信息
+            if (errno == EINTR)
+                continue; // 忽略信号中断，继续等待
             break;
         }
 
         for (int i = 0; i < nfds; i++)
         {
+
             int fd = events[i].data.fd;
             auto it = handlers_.find(fd);
-
             if (it != handlers_.end())
             {
+
                 if (events[i].events & EPOLLIN)
                 {
                     it->second->handleRead();
@@ -82,6 +89,7 @@ void Reactor::eventLoop()
 
                 if (events[i].events & EPOLLOUT)
                 {
+
                     it->second->handleWrite();
                 }
             }

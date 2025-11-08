@@ -19,6 +19,11 @@ AcceptorHandler::AcceptorHandler(const std::string &ip, int port, int reactor_si
 
 AcceptorHandler::~AcceptorHandler()
 {
+    for (auto &it : threads)
+    {
+        if (it.joinable())
+            it.join();
+    }
     if (fd_ > 0)
     {
         close(fd_);
@@ -41,9 +46,8 @@ void AcceptorHandler::exec()
 {
     for (auto &it : sub_reactor_)
     {
-        std::thread t([&]
-                      { it.eventLoop(); });
-        t.detach();
+        threads.emplace_back([&]
+                             { it.eventLoop(); });
     }
 }
 

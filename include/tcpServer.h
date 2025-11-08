@@ -14,6 +14,7 @@ public:
 private:
     std::shared_ptr<Reactor> main_reactor_;    // 主reactor
     std::shared_ptr<AcceptorHandler> acceptor; // 接受连接处理器
+    std::shared_ptr<std::thread> t;
 };
 
 #endif

@@ -13,12 +13,15 @@ TcpServer::TcpServer(const std::string &ip, int port, AllocMode mode = AllocMode
 
     main_reactor_->addHandler(acceptor, EPOLLIN);
 }
-TcpServer::~TcpServer() = default;
+TcpServer::~TcpServer()
+{
+    if (t->joinable())
+        t->join();
+};
 
 void TcpServer::start()
 {
-    std::thread t([this]
-                  { main_reactor_->eventLoop(); });
-    t.detach();
     acceptor->exec();
+    t = std::make_shared<std::thread>([this]
+                                      { main_reactor_->eventLoop(); });
 }

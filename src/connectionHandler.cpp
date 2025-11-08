@@ -14,6 +14,7 @@ ConnectionHandler::~ConnectionHandler()
 }
 void ConnectionHandler::handleRead()
 {
+    std::cout << "开始读取" << std::endl;
     char buffer[1024];
     ssize_t n;
 
