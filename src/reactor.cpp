@@ -6,7 +6,7 @@
 
 const int MAX_EVENTS = 1024;
 
-Reactor::Reactor() : connection_count_(0)
+Reactor::Reactor(std::string name) : connection_count_(0), name_(name)
 {
     // 创建epoll实例
     epoll_fd_ = epoll_create1(0);
@@ -79,6 +79,9 @@ void Reactor::eventLoop()
 
             int fd = events[i].data.fd;
             auto it = handlers_.find(fd);
+            std::cout << "client_fd2 " << fd << std::endl;
+
+            std::cout << this->name_ << "是否找到----？" << (it != handlers_.end()) << std::endl;
             if (it != handlers_.end())
             {
 

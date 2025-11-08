@@ -5,6 +5,7 @@
 #include "socket.h"
 #include <vector>
 #include <thread>
+#include <atomic>
 
 // 客户端fd分配模式
 enum class AllocMode
@@ -32,7 +33,7 @@ private:
 
     Socket server;
     AllocMode mode_;                   // 客户端fd分配模式
-    int next_index_;                   // 轮询计算下一个分配index
+    std::atomic<int> next_index_;      // 轮询计算下一个分配index
     std::vector<Reactor> sub_reactor_; // 从reactor数组
     std::vector<std::thread> threads;
 };

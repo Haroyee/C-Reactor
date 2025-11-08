@@ -3,11 +3,12 @@
 #include <map>
 #include <memory>
 #include "eventHandler.h"
+#include <iostream>
 // Reactor类
 class Reactor
 {
 public:
-    Reactor();
+    Reactor(std::string name);
 
     ~Reactor();
     // 添加事件
@@ -23,10 +24,11 @@ public:
     void eventLoop();
 
     int getConnection_count();
+    std::map<int, std::shared_ptr<EventHandler>> handlers_;
+    std::string name_;
 
 private:
     int epoll_fd_;
     int connection_count_;
-    std::map<int, std::shared_ptr<EventHandler>> handlers_;
 };
 #endif
