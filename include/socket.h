@@ -10,8 +10,8 @@
 class Socket
 {
 private:
-    int m_sockfd;
-    struct sockaddr_in m_addr;
+    int m_sockfd_;
+    struct sockaddr_in m_addr_;
 
 public:
     Socket();
@@ -33,6 +33,8 @@ public:
     int Recv(char *, int);
 
     void Close();
+
+    int getFd();
 };
 
 #endif

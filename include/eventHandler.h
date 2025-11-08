@@ -1,7 +1,8 @@
 #ifndef EVENTHANDLER_H
 #define EVENTHANDLER_H
+#include <memory>
 
-class EventHandler
+class EventHandler : public std::enable_shared_from_this<EventHandler>
 {
 public:
     EventHandler(int);
