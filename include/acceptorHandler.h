@@ -33,9 +33,9 @@ private:
     void gen_index(); // 生成下一个reactor的index
 
     Socket server;
-    AllocMode mode_;                   // 客户端fd分配模式
-    std::atomic<int> next_index_;      // 轮询计算下一个分配index
-    std::vector<Reactor> sub_reactor_; // 从reactor数组
+    AllocMode mode_;                                    // 客户端fd分配模式
+    std::atomic<int> next_index_;                       // 轮询计算下一个分配index
+    std::vector<std::shared_ptr<Reactor>> sub_reactor_; // 从reactor数组
     std::vector<std::shared_ptr<std::thread>> threads;
 };
 #endif

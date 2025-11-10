@@ -8,7 +8,7 @@
 class ConnectionHandler : public EventHandler
 {
 public:
-    ConnectionHandler(int client_fd, Reactor &reactor);
+    ConnectionHandler(int client_fd, std::shared_ptr<Reactor> reactor);
 
     ~ConnectionHandler();
 
@@ -17,7 +17,7 @@ public:
     void handleWrite() override;
 
 private:
-    Reactor &reactor_;
+    std::shared_ptr<Reactor> reactor_;
     std::string write_buffer_;
     bool write_ready_;
 };

@@ -81,7 +81,6 @@ void Reactor::eventLoop()
             int fd = events[i].data.fd;
 
             auto it = handlers_.find(fd);
-            std::cout << fd << "是否找到？" << (it != handlers_.end()) << std::endl;
 
             if (it != handlers_.end())
             {

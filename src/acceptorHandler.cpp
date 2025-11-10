@@ -21,7 +21,7 @@ AcceptorHandler::AcceptorHandler(const std::string &ip, int port, int reactor_si
         exit(EXIT_FAILURE);
     for (int i = 0; i < reactor_size; ++i)
     {
-        sub_reactor_.emplace_back();
+        sub_reactor_.emplace_back(std::make_shared<Reactor>());
     }
 }
 
@@ -40,26 +40,31 @@ AcceptorHandler::~AcceptorHandler()
 
 void AcceptorHandler::handleRead()
 {
-    int client_fd = server.Accept();
-    if (client_fd < 0)
-        return;
-    setNonBlocking(client_fd);
+    while (true)
+    {
+        int client_fd = server.Accept();
+        if (client_fd < 0)
+        {
+            // EAGAIN 或 EWOULDBLOCK 说明已经处理了所有连接
+            break;
+        }
+        setNonBlocking(client_fd);
 
-    auto handler = std::make_shared<ConnectionHandler>(client_fd, sub_reactor_[next_index_]);
-    sub_reactor_[next_index_].addHandler(handler, EPOLLIN | EPOLLET);
-    std::cout << client_fd << "插入成功" << std::endl;
+        auto handler = std::make_shared<ConnectionHandler>(client_fd, sub_reactor_[next_index_]);
+        sub_reactor_[next_index_]->addHandler(handler, EPOLLIN | EPOLLET);
 
-    gen_index();
+        gen_index();
+    }
 }
 // 作为接受器，不需要处理写事件
 void AcceptorHandler::handleWrite() {};
 
 void AcceptorHandler::exec()
 {
-    for (auto &it : sub_reactor_)
+    for (auto &reactor_ptr : sub_reactor_)
     {
-        threads.emplace_back(std::make_shared<std::thread>([&]
-                                                           { it.eventLoop(); }));
+        threads.emplace_back(std::make_shared<std::thread>([reactor_ptr]
+                                                           { reactor_ptr->eventLoop(); }));
     }
 }
 
@@ -75,7 +80,7 @@ void AcceptorHandler::gen_index()
         next_index_ = 0;
         for (size_t i = 0; i < sub_reactor_.size(); ++i)
         {
-            if (sub_reactor_[i].getConnection_count() < sub_reactor_[next_index_].getConnection_count())
+            if (sub_reactor_[i]->getConnection_count() < sub_reactor_[next_index_]->getConnection_count())
                 next_index_ = i;
         }
     }

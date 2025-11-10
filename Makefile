@@ -22,7 +22,7 @@ OBJ := $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRC)) #OBJ := $(SRC:.cpp
 
 
 #指定默认目标
-all: $(OUTPUT_DIR)/$(EXE_NAME)
+all: $(OUTPUT_DIR)/$(EXE_NAME) client
 #链接生成可执行文件 依赖.o文件,目标文件夹，执行文件文件夹
 $(OUTPUT_DIR)/$(EXE_NAME): $(OBJ) $(BUILD_DIR) $(OUTPUT_DIR)
 	$(CC) $(OBJ) -o $@ $(LDFLAGS) $(LDLIBS)
@@ -30,6 +30,11 @@ $(OUTPUT_DIR)/$(EXE_NAME): $(OBJ) $(BUILD_DIR) $(OUTPUT_DIR)
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(SRC) $(BUILD_DIR)
 	$(CC) -c $< -o $@ $(CFLAGS)
 
+client:test/client.o build/socket.o
+	$(CC) $^ -o test/$@ $(LDFLAGS) $(LDLIBS)
+
+test/client.o: test/client.cpp
+	$(CC)  -c $^ -o $@  $(CFLAGS)
 
 ifeq ($(OS), Windows_NT) # Windows 系统
 clean:
