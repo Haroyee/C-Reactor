@@ -6,6 +6,7 @@
 #include <vector>
 #include <thread>
 #include <atomic>
+#include <memory>
 
 // 客户端fd分配模式
 enum class AllocMode
@@ -35,6 +36,6 @@ private:
     AllocMode mode_;                   // 客户端fd分配模式
     std::atomic<int> next_index_;      // 轮询计算下一个分配index
     std::vector<Reactor> sub_reactor_; // 从reactor数组
-    std::vector<std::thread> threads;
+    std::vector<std::shared_ptr<std::thread>> threads;
 };
 #endif

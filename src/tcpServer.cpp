@@ -9,7 +9,7 @@ TcpServer::TcpServer(const std::string &ip, int port, AllocMode mode = AllocMode
 {
     acceptor = std::make_shared<AcceptorHandler>(ip, port, reactor_size, mode);
 
-    main_reactor_ = std::make_shared<Reactor>("主");
+    main_reactor_ = std::make_shared<Reactor>();
 
     main_reactor_->addHandler(acceptor, EPOLLIN);
 }

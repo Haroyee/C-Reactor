@@ -21,7 +21,7 @@ AcceptorHandler::AcceptorHandler(const std::string &ip, int port, int reactor_si
         exit(EXIT_FAILURE);
     for (int i = 0; i < reactor_size; ++i)
     {
-        sub_reactor_.emplace_back("从");
+        sub_reactor_.emplace_back();
     }
 }
 
@@ -29,8 +29,8 @@ AcceptorHandler::~AcceptorHandler()
 {
     for (auto &it : threads)
     {
-        if (it.joinable())
-            it.join();
+        if (it->joinable())
+            it->join();
     }
     if (fd_ > 0)
     {
@@ -44,12 +44,11 @@ void AcceptorHandler::handleRead()
     if (client_fd < 0)
         return;
     setNonBlocking(client_fd);
-    std::cout << "AAAAA" << std::endl;
 
     auto handler = std::make_shared<ConnectionHandler>(client_fd, sub_reactor_[next_index_]);
     sub_reactor_[next_index_].addHandler(handler, EPOLLIN | EPOLLET);
-    std::cout << "client_fd1 " << client_fd << std::endl;
-    std::cout << "是否找到？" << (sub_reactor_[next_index_].handlers_.find(handler->getFd()) != sub_reactor_[next_index_].handlers_.end()) << std::endl;
+    std::cout << client_fd << "插入成功" << std::endl;
+
     gen_index();
 }
 // 作为接受器，不需要处理写事件
@@ -59,8 +58,8 @@ void AcceptorHandler::exec()
 {
     for (auto &it : sub_reactor_)
     {
-        threads.emplace_back([&]
-                             { it.eventLoop(); });
+        threads.emplace_back(std::make_shared<std::thread>([&]
+                                                           { it.eventLoop(); }));
     }
 }
 

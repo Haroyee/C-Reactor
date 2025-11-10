@@ -4,11 +4,12 @@
 #include <memory>
 #include "eventHandler.h"
 #include <iostream>
+#include <mutex>
 // Reactor类
 class Reactor
 {
 public:
-    Reactor(std::string name);
+    Reactor();
 
     ~Reactor();
     // 添加事件
@@ -25,7 +26,6 @@ public:
 
     int getConnection_count();
     std::map<int, std::shared_ptr<EventHandler>> handlers_;
-    std::string name_;
 
 private:
     int epoll_fd_;
