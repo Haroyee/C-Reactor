@@ -42,7 +42,5 @@ sites
 
 #vscode
 .vscode
-output
 lib
-build
 #makefile

@@ -31,7 +31,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(SRC) $(BUILD_DIR)
 	$(CC) -c $< -o $@ $(CFLAGS)
 
 client:test/client.o build/socket.o
-	$(CC) $^ -o test/$@ $(LDFLAGS) $(LDLIBS)
+	$(CC) $^ -o test/$@.exe $(LDFLAGS) $(LDLIBS)
 
 test/client.o: test/client.cpp
 	$(CC)  -c $^ -o $@  $(CFLAGS)
