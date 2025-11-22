@@ -25,10 +25,10 @@ public:
     void eventLoop();
 
     int getConnection_count();
-    std::map<int, std::shared_ptr<EventHandler>> handlers_;
 
 private:
     int epoll_fd_;
     int connection_count_;
+    std::map<int, std::shared_ptr<EventHandler>> handlers_;
 };
 #endif

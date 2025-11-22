@@ -27,7 +27,7 @@ void ConnectionHandler::handleRead()
     if (n == 0)
     {
         // 客户端关闭连接
-        std::cout << "Connection closed" << std::endl;
+        // std::cout << "Connection closed" << std::endl;
         reactor_->removeHandler(shared_from_this());
         return;
     }

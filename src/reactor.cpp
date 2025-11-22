@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-const int MAX_EVENTS = 1024;
+const int MAX_EVENTS = 4096;
 
 Reactor::Reactor() : connection_count_(0)
 {
@@ -55,8 +55,12 @@ void Reactor::modifyHandler(std::shared_ptr<EventHandler> handler, uint32_t even
 void Reactor::removeHandler(std::shared_ptr<EventHandler> handler)
 {
     epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, handler->getFd(), nullptr);
-
-    handlers_.erase(handler->getFd());
+    auto it = handlers_.find(handler->getFd());
+    if (it != handlers_.end())
+    {
+        handlers_.erase(it); // 从 map 中移除
+    }
+    close(handler->getFd());
     connection_count_--;
 }
 
@@ -87,6 +91,7 @@ void Reactor::eventLoop()
 
                 if (events[i].events & EPOLLIN)
                 {
+
                     it->second->handleRead();
                 }
 
