@@ -7,6 +7,7 @@ A high-performance, multi-reactor, multithreaded network server framework based 
 - Efficient event-driven model based on epoll
 - Supports multi-reactor, multithreaded architecture
 - Two client fd allocation modes: round robin and load-based
+- Solve the TCP sticky packet problem by using a fixed-length packet header and a variable-length packet body
 - Clear class hierarchy for event handling; easy to extend
 - Built and tested on Linux
 
