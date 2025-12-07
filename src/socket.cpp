@@ -77,7 +77,7 @@ int Socket::Accept()
     {
         char ip[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &c_addr.sin_addr.s_addr, ip, INET_ADDRSTRLEN);
-        // std::cout << "client " << connfd << ": " << ip << ":" << ntohs(c_addr.sin_port) << " link successful!" << std::endl;
+        std::cout << "client " << connfd << ": " << ip << ":" << ntohs(c_addr.sin_port) << " link successful!" << std::endl;
         return connfd;
     }
 }

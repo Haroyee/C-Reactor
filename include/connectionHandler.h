@@ -18,10 +18,16 @@ public:
     void handleWrite() override;
 
 private:
+    // 核心：处理接收缓冲区，拆包逻辑
+    void processRecvBuffer();
+    // 辅助：处理单条完整消息（业务逻辑入口）
+    void handleCompleteMessage(const std::string &msg);
+
     std::shared_ptr<Reactor> reactor_;
     std::string write_buffer_;
     bool write_ready_;
-    std::vector<char> recvBuffer_; // 接收缓冲区，用于存储未处理完的数据
-    size_t expectedLength_;        // 期望接收的下一个消息体的长度（不包括长度前缀）
+    std::vector<char> recv_buffer_; // 接收缓冲区（存未拆完的字节）
+    size_t expected_body_len_;      // 期望读取的消息体长度
+    bool is_reading_header_;        // 状态：是否正在读取消息头（4字节长度）
 };
 #endif
